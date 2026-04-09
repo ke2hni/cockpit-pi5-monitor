@@ -1,6 +1,103 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+/*
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ *
+ * Copyright (C) 2026 Jeff Milne - KE2HNI
+ */
+
+/*
+ * Cockpit page-level styling pulled in from the upstream-friendly page layout.
+ */
 @use "page.scss";
 
-p {
-    font-weight: bold;
+/*
+ * Main outer service-style card used to hold the full monitor page content.
+ */
+
+.pi-card-service-like {
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  border-radius: var(--pf-t--global--border--radius--large);
+}
+
+.pi-card-service-like > .pf-v6-c-card__body > .pf-v6-l-gallery {
+  margin-bottom: 1.5rem;
+}
+
+/*
+ * Legacy last-update card styles kept for compatibility with earlier layout work.
+ */
+.pi-last-update-card {
+  --pf-v6-c-card--BorderWidth: var(--pf-t--global--border--width--box--status--default);
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--nonstatus--purple--default);
+}
+
+.pi-last-update-card .pf-v6-c-card__body {
+  text-align: center;
+}
+
+/*
+ * Status border helpers used by live thermal/fan cards.
+ */
+.pi-card-status-info {
+  --pf-v6-c-card--BorderWidth: 3px;
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--nonstatus--blue--default);
+}
+
+.pi-card-status-success {
+  --pf-v6-c-card--BorderWidth: 3px;
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--status--success--default);
+}
+
+.pi-card-status-warning {
+  --pf-v6-c-card--BorderWidth: 3px;
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--status--warning--default);
+}
+
+.pi-card-status-danger {
+  --pf-v6-c-card--BorderWidth: 3px;
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--status--danger--default);
+}
+
+/*
+ * Text color helpers used for health/status wording.
+ */
+.pi-text-status-success {
+  color: var(--pf-t--global--text--color--status--success--default);
+}
+
+.pi-text-status-danger {
+  color: var(--pf-t--global--text--color--status--danger--default);
+}
+
+/*
+ * Shared compact-card content alignment and card label sizing.
+ */
+.pi-card-service-like .pf-v6-c-card.pf-m-compact > .pf-v6-c-card__body {
+  text-align: center;
+}
+
+.pi-card-label {
+  font-size: var(--pf-t--global--font--size--heading--sm);
+  line-height: var(--pf-t--global--font--line-height--heading);
+  margin-bottom: var(--pf-t--global--spacer--sm);
+}
+
+/*
+ * Live Sensor Data status card sizing and online/offline border states.
+ */
+.pi-live-data-card {
+  width: 12rem;
+}
+
+.pi-live-data-card-online {
+  --pf-v6-c-card--BorderWidth: var(--pf-t--global--border--width--box--status--default);
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--nonstatus--purple--default);
+}
+
+.pi-live-data-card-offline {
+  --pf-v6-c-card--BorderWidth: var(--pf-t--global--border--width--box--status--default);
+  --pf-v6-c-card--BorderColor: var(--pf-t--global--border--color--status--danger--default);
+}
+
+.pi-live-data-card .pf-v6-c-card__body {
+  text-align: center;
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!--
 Copyright (C) 2017 Red Hat, Inc.
+Copyright (C) 2026 Jeff Milne - KE2HNI
 
 Cockpit is free software; you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by
@@ -17,19 +18,26 @@ along with this package; If not, see <http://www.gnu.org/licenses/>.
 -->
 <html lang="en">
 <head>
-    <title translate>Cockpit Starter Kit</title>
+    <!--
+      Basic HTML shell for the Cockpit plugin.
+      Loads Cockpit base JS, plugin bundle, translations, and branding.
+    -->
+    <title translate>Pi 5 Monitor</title>
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    
     <link rel="stylesheet" href="index.css">
     <link href="../../static/branding.css" rel="stylesheet" />
 
+    <script type="text/javascript" src="../base1/cockpit.js"></script>
     <script type="text/javascript" src="index.js"></script>
     <script type="text/javascript" src="po.js"></script>
+     
 </head>
 
 <body>
-    <div id="app"></div>
+    <!-- React mount point for the Pi 5 Monitor application. -->
+ <div class="ct-page-fill" id="app"></div>   
 </body>
 </html>

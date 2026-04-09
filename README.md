@@ -1,203 +1,248 @@
-# Cockpit Starter Kit
+# Pi 5 Monitor
 
-Scaffolding for a [Cockpit](https://cockpit-project.org/) module.
+Pi 5 Monitor is a Cockpit-compatible third-party plugin for Raspberry Pi 5 systems.
 
-# Development dependencies
+It provides a clean Cockpit / PatternFly interface for live Raspberry Pi 5 hardware, power, storage, clock, and history data. The project is intentionally focused on Raspberry Pi 5 hardware paths and has been tested in an ASL 3 environment.
 
-On Debian/Ubuntu:
+## Features
 
-    sudo apt install gettext nodejs npm make
+### Thermal / Cooling
+- CPU temperature
+- NVMe temperature
+- I/O temperature
+- Power Chip temperature
+- Fan RPM
+- Fan Power Level
+- Color-coded border status for quick temperature visibility
 
-On Fedora:
+### History / Trends
+- Rolling local history from the Pi monitor history collector
+- Summary of stored samples
+- Temperature ranges for CPU, I/O, NVMe, and Power Chip
+- Event totals for undervoltage, throttling, frequency cap, and soft temperature limit
+- Last 5 Days view
+- Day selection based on the node timezone
+- Selected sample view for stored point-in-time readings
+- Selected Sample dropdown with its own internal scrollbar
+- Automatic dropdown placement with overflow protection
+- Selected Sample auto-scroll to the current selection when reopened
 
-    sudo dnf install gettext nodejs npm make
+### Power / Throttling
+- Power health summary
+- Current undervoltage
+- Undervoltage since boot
+- Current throttled status
+- Throttled since boot
+- Current frequency cap
+- Frequency cap since boot
+- Current soft temperature limit
+- Soft temperature limit since boot
 
-On openSUSE Tumbleweed and Leap:
+### System Summary
+- Pi model
+- CPU frequency
+- Total RAM
+- Memory usage
+- Uptime
+- Kernel
+- Load averages
+- Root filesystem used
 
-    sudo zypper in gettext-runtime nodejs npm make
+### Boot / Device Info
+- Boot device
+- Root device
+- NVMe present
+- Fan present
 
-# Getting and building the source
+### NVMe Drive
+- SMART temperature
+- Model
+- Capacity
+- Health
+- Firmware
+- Percentage of drive life used
+- Power-on hours
+- Unsafe shutdowns
+- Media errors
+- Mounted At
 
-These commands check out the source and build it into the `dist/` directory:
+### SD Card
+- Presence
+- Device
+- Capacity
+- Card used
+- Vendor
+- Model
+- Serial
+- Mounted At
 
+### External USB Storage
+- Model
+- Capacity
+- Free space
+- Device path
+- Mounted At
+
+**Note:** The External USB Storage section only appears when a USB storage device is detected.
+
+### PCIe / NVMe Link
+- Current link speed
+- Current link width
+- Max link speed
+- Max link width
+
+### Power Supply
+- Input voltage
+- Negotiated current limit
+- USB current limit mode
+- USB over-current at boot
+
+### Voltages
+- Core voltage
+- SDRAM C
+- SDRAM I
+- SDRAM P
+
+### Clocks
+- ARM clock
+- Core clock
+- eMMC clock
+
+### Advanced
+- Firmware version
+- Ring oscillator
+- Core rail power
+
+## Show/Hide Sections
+
+The plugin includes a Show/Hide Sections control near the top of the page.
+
+This lets users:
+- hide sections they do not want to see
+- keep commonly used sections visible
+- simplify the page layout for their own workflow
+
+Section visibility choices are saved in the browser's local storage, so the layout remains in place across page reloads and browser refreshes on that same browser profile.
+
+## Current Scope
+
+This plugin is intentionally focused on:
+- Raspberry Pi 5
+- Cockpit 337
+- Cockpit-style third-party plugin structure
+- PatternFly / Cockpit-compatible UI patterns
+- Simple, readable monitoring without unnecessary extra controls
+
+## Runtime Requirements
+
+For full monitoring support on Raspberry Pi 5, the plugin expects standard Pi and Linux tooling to be available, including:
+
+- `vcgencmd`
+- `smartctl` from the `smartmontools` package for NVMe SMART and drive-health data
+- `nvme-cli` for NVMe-related support and troubleshooting
+
+If `smartctl` is not installed, the NVMe section can still show some basic device information, but SMART health, SMART temperature, percentage used, power-on hours, unsafe shutdowns, and media error reporting may be missing or incomplete.
+
+## History Collector
+
+Pi 5 Monitor uses a local history collector plus a systemd service and timer.
+
+The collector writes sample data to:
+
+```bash
+/var/lib/pi-monitor/history.ndjson
 ```
-git clone https://github.com/cockpit-project/starter-kit.git
-cd starter-kit
+
+This file is runtime data and should not be populated with personal node history in a public GitHub package.
+
+For a true fresh install:
+- `/var/lib/pi-monitor/` may not exist yet
+- `history.ndjson` may not exist yet
+- the install script starts the history collector once so the first sample is created immediately
+
+For upgrades or reinstalls on an existing system:
+- existing history data should normally be preserved
+- the runtime history file should continue to be used if it already exists
+
+## Build from Source
+
+From the project directory:
+
+```bash
+npm install
+npm run stylelint
+npm run eslint
 make
+make codecheck
 ```
 
-# Installing
+## Install
 
-`make install` compiles and installs the package in `/usr/local/share/cockpit/`. The
-convenience targets `srpm` and `rpm` build the source and binary rpms,
-respectively. Both of these make use of the `dist` target, which is used
-to generate the distribution tarball. In `production` mode, source files are
-automatically minified and compressed. Set `NODE_ENV=production` if you want to
-duplicate this behavior.
+The published package name is:
 
-For development, you usually want to run your module straight out of the git
-tree. To do that, run `make devel-install`, which links your checkout to the
-location were cockpit-bridge looks for packages. If you prefer to do
-this manually:
-
-```
-mkdir -p ~/.local/share/cockpit
-ln -s `pwd`/dist ~/.local/share/cockpit/starter-kit
+```bash
+pi-monitor
 ```
 
-After changing the code and running `make` again, reload the Cockpit page in
-your browser.
+The `v2` name was only used during development reference and should not be used as the final installed package name.
 
-You can also use
-[watch mode](https://esbuild.github.io/api/#watch) to
-automatically update the bundle on every code change with
+From the project root, install with:
 
-    ./build.js -w
-
-or
-
-    make watch
-
-When developing against a virtual machine, watch mode can also automatically upload
-the code changes by setting the `RSYNC` environment variable to
-the remote hostname.
-
-    RSYNC=c make watch
-
-When developing against a remote host as a normal user, `RSYNC_DEVEL` can be
-set to upload code changes to `~/.local/share/cockpit/` instead of
-`/usr/local`.
-
-    RSYNC_DEVEL=example.com make watch
-
-To "uninstall" the locally installed version, run `make devel-uninstall`, or
-remove manually the symlink:
-
-    rm ~/.local/share/cockpit/starter-kit
-
-# Running eslint
-
-Cockpit Starter Kit uses [ESLint](https://eslint.org/) to automatically check
-JavaScript/TypeScript code style in `.js[x]` and `.ts[x]` files.
-
-eslint is executed as part of `test/static-code`, aka. `make codecheck`.
-
-For developer convenience, the ESLint can be started explicitly by:
-
-    npm run eslint
-
-Violations of some rules can be fixed automatically by:
-
-    npm run eslint:fix
-
-Rules configuration can be found in the `.eslintrc.json` file.
-
-## Running stylelint
-
-Cockpit uses [Stylelint](https://stylelint.io/) to automatically check CSS code
-style in `.css` and `scss` files.
-
-styleint is executed as part of `test/static-code`, aka. `make codecheck`.
-
-For developer convenience, the Stylelint can be started explicitly by:
-
-    npm run stylelint
-
-Violations of some rules can be fixed automatically by:
-
-    npm run stylelint:fix
-
-Rules configuration can be found in the `.stylelintrc.json` file.
-
-# Running tests locally
-
-Run `make check` to build an RPM, install it into a standard Cockpit test VM
-(centos-9-stream by default), and run the test/check-application integration test on
-it. This uses Cockpit's Chrome DevTools Protocol based browser tests, through a
-Python API abstraction. Note that this API is not guaranteed to be stable, so
-if you run into failures and don't want to adjust tests, consider checking out
-Cockpit's test/common from a tag instead of main (see the `test/common`
-target in `Makefile`).
-
-After the test VM is prepared, you can manually run the test without rebuilding
-the VM, possibly with extra options for tracing and halting on test failures
-(for interactive debugging):
-
-    TEST_OS=centos-9-stream test/check-application -tvs
-
-It is possible to setup the test environment without running the tests:
-
-    TEST_OS=centos-9-stream make prepare-check
-
-You can also run the test against a different Cockpit image, for example:
-
-    TEST_OS=fedora-40 make check
-
-# Running tests in CI
-
-These tests can be run in [Cirrus CI](https://cirrus-ci.org/), on their free
-[Linux Containers](https://cirrus-ci.org/guide/linux/) environment which
-explicitly supports `/dev/kvm`. Please see [Quick
-Start](https://cirrus-ci.org/guide/quick-start/) how to set up Cirrus CI for
-your project after forking from starter-kit.
-
-The included [.cirrus.yml](./.cirrus.yml) runs the integration tests for two
-operating systems (Fedora and CentOS 8). Note that if/once your project grows
-bigger, or gets frequent changes, you may need to move to a paid account, or
-different infrastructure with more capacity.
-
-Tests also run in [Packit](https://packit.dev/) for all currently supported
-Fedora releases; see the [packit.yaml](./packit.yaml) control file. You need to
-[enable Packit-as-a-service](https://packit.dev/docs/packit-service/) in your GitHub project to use this.
-To run the tests in the exact same way for upstream pull requests and for
-[Fedora package update gating](https://docs.fedoraproject.org/en-US/ci/), the
-tests are wrapped in the [FMF metadata format](https://github.com/teemtee/fmf)
-for using with the [tmt test management tool](https://docs.fedoraproject.org/en-US/ci/tmt/).
-Note that Packit tests can *not* run their own virtual machine images, thus
-they only run [@nondestructive tests](https://github.com/cockpit-project/cockpit/blob/main/test/common/testlib.py).
-
-# Customizing
-
-After cloning the Starter Kit you should rename the files, package names, and
-labels to your own project's name. Use these commands to find out what to
-change:
-
-    find -iname '*starter*'
-    git grep -i starter
-
-# Automated release
-
-Once your cloned project is ready for a release, you should consider automating
-that. The intention is that the only manual step for releasing a project is to create
-a signed tag for the version number, which includes a summary of the noteworthy
-changes:
-
-```
-123
-
-- this new feature
-- fix bug #123
+```bash
+sudo ./install.sh
 ```
 
-Pushing the release tag triggers the [release.yml](.github/workflows/release.yml.disabled)
-[GitHub action](https://github.com/features/actions) workflow. This creates the
-official release tarball and publishes as upstream release to GitHub. The
-workflow is disabled by default -- to use it, edit the file as per the comment
-at the top, and rename it to just `*.yml`.
+The installer:
+- runs the Cockpit plugin install
+- installs the history collector script
+- installs the systemd service and timer
+- enables the timer
+- starts the collector once so history exists immediately after install
 
-The Fedora and COPR releases are done with [Packit](https://packit.dev/),
-see the [packit.yaml](./packit.yaml) control file.
+After install:
+- refresh Cockpit in the browser
+- open **Pi 5 Monitor**
+- verify the plugin appears in the Cockpit menu
 
-# Automated maintenance
+## Cockpit Menu Placement
 
-It is important to keep your [NPM modules](./package.json) up to date, to keep
-up with security updates and bug fixes. This happens with
-[dependabot](https://github.com/dependabot),
-see [configuration file](.github/dependabot.yml).
+The plugin is installed as a Cockpit menu entry labeled:
 
-# Further reading
+`Pi 5 Monitor`
 
- * The [Starter Kit announcement](https://cockpit-project.org/blog/cockpit-starter-kit.html)
-   blog post explains the rationale for this project.
- * [Cockpit Deployment and Developer documentation](https://cockpit-project.org/guide/latest/)
- * [Make your project easily discoverable](https://cockpit-project.org/blog/making-a-cockpit-application.html)
+## GitHub Package Contents
+
+The GitHub package/repository should contain the project source plus the installer files, including:
+
+- `install.sh`
+- `tools/pi-monitor-history`
+- `packaging/pi-monitor-history.service`
+- `packaging/pi-monitor-history.timer`
+
+The GitHub package/repository should **not** include a populated runtime history file from a live node.
+
+## Status
+
+Current status:
+- Passes `stylelint`
+- Passes `eslint`
+- Passes `make codecheck`
+- Manual dropdown placement checks passed
+- Manual history/timezone checks passed
+- Fresh-install simulation passed
+- Reboot/install verification passed
+- Working Cockpit plugin
+- Ready for GitHub packaging
+
+## Notes
+
+- This plugin is designed around Raspberry Pi 5 hardware paths and telemetry.
+- It is not intended to be a generic Cockpit hardware plugin for all Linux systems.
+- The design goal is to stay close to Cockpit and PatternFly conventions while remaining simple and maintainable.
+- The final published install uses a stable package name and stable install path like any other Cockpit-compatible third-party plugin.
+
+## License
+
+This project is licensed under the GNU Lesser General Public License v2.1 or later.
+
+See the `LICENSE` file for details.

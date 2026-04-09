@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# Copyright (C) 2026 Jeff Milne - KE2HNI
+#
+# systemd oneshot service for the Pi Monitor history collector.
+# Runs the collector script once, then relaxes file permissions so Cockpit
+# can read the NDJSON history file.
+
+[Unit]
+Description=Collect Pi Monitor hardware history
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/pi-monitor-history
+ExecStartPost=/usr/bin/chmod 0644 /var/lib/pi-monitor/history.ndjson

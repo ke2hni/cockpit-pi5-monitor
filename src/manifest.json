@@ -1,11 +1,12 @@
 {
-    "requires": {
-        "cockpit": "137"
-    },
-
-    "tools": {
-        "index": {
-            "label": "Starter Kit"
-        }
+  "requires": {
+    "cockpit": "337"
+  },
+  "menu": {
+    "index": {
+      "label": "Pi 5 Monitor",
+      "path": "index.html",
+      "order": 65
     }
+  }
 }

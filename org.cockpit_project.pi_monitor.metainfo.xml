@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>org.cockpit_project.pi_monitor</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>Pi 5 Monitor</name>
+  <summary>Raspberry Pi 5 hardware, power, clocks, storage, and system status monitor for Cockpit</summary>
+  <description>
+    <p>
+      Pi 5 Monitor is a Cockpit add-on for Raspberry Pi 5 systems. It provides
+      a simple live view of thermal status, cooling, power and throttling,
+      system summary, boot and device information, NVMe and SD card details,
+      PCIe link status, voltages, clocks, and advanced Raspberry Pi firmware
+      diagnostics.
+    </p>
+    <p>
+      It is designed for Raspberry Pi 5 systems and works well in ASL 3
+      environments. The interface also includes Show/Hide Sections so users can
+      choose which monitor sections remain visible.
+    </p>
+    <p>
+      Some storage and firmware-related fields depend on runtime tools such as
+      vcgencmd, smartctl from smartmontools, and nvme-cli being available on
+      the system.
+    </p>
+  </description>
+  <extends>org.cockpit_project.cockpit</extends>
+  <launchable type="cockpit-manifest">pi-monitor</launchable>
+  <url type="homepage">https://github.com/ke2hni/cockpit-pi5-monitor</url>
+  <url type="bugtracker">https://github.com/ke2hni/cockpit-pi5-monitor/issues</url>
+  <developer id="com.ke2hni">
+    <name>Jeff Milne</name>
+  </developer>
+</component>

@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# Copyright (C) 2026 Jeff Milne - KE2HNI
+#
+# systemd timer for the Pi Monitor history collector.
+# Starts a few minutes after boot and then repeats every 5 minutes.
+
+[Unit]
+Description=Run Pi Monitor history collector on a schedule
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=5min
+Persistent=true
+Unit=pi-monitor-history.service
+
+[Install]
+WantedBy=timers.target
