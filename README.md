@@ -184,11 +184,15 @@ The published package name is:
 pi-monitor
 ```
 
-The `v2` name was only used during development reference and should not be used as the final installed package name.
-
 From the project root, install with:
 
+## Quick Install
+
+### Clone from GitHub
+
 ```bash
+git clone https://github.com/ke2hni/cockpit-pi5-monitor.git
+cd cockpit-pi5-monitor
 sudo ./install.sh
 ```
 
