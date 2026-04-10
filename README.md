@@ -139,8 +139,14 @@ This removes the stored History / Trends data permanently.
 - For full NVMe health details, `smartctl` from `smartmontools` is recommended.
 - `nvme-cli` is also recommended for NVMe-related support and troubleshooting.
 
-## License
+## License<img width="1600" height="900" alt="Screenshot 2026-04-09 213701" src="https://github.com/user-attachments/assets/b79e44dd-1337-413a-b9c2-03710438bbdc" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213720" src="https://github.com/user-attachments/assets/56ac18e1-1bf0-4b99-ac53-10ca320bdfe4" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213729" src="https://github.com/user-attachments/assets/f1ad253e-d3fc-4853-9eb3-2d5b68034f9b" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213736" src="https://github.com/user-attachments/assets/55e74dd7-2253-4838-b081-098a026dcf4f" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213752" src="https://github.com/user-attachments/assets/163b2f41-9a24-45a5-b874-1f71f6b0ca4b" />
+
 
 This project is licensed under the GNU Lesser General Public License v2.1 or later.
 
 See the `LICENSE` file for details.
+
