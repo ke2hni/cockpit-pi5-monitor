@@ -4,109 +4,142 @@ This file is for source/build and project-maintenance reference.
 It is not needed by normal users who are only installing the plugin.
 
 Project identity
-- Public package/install name: pi-monitor
-- Development history used the v2 name internally, but public install/package naming should stay pi-monitor
+
+* Public package/install name: pi-monitor
+* Development history used the v2 name internally, but public install/package naming should stay pi-monitor
 
 Public install flow
-- Normal users should install from the repo root with:
+
+* Normal users should install from the repo root with:
   sudo ./install.sh
-- Do not direct normal users to make devel-install
-- The installer uses the starter-kit Makefile install flow plus the history collector/service/timer install
+* Do not direct normal users to make devel-install
+* The installer uses the starter-kit Makefile install flow plus the history collector/service/timer install
 
 Current important repo files
-- install.sh
-- README.md or README.txt for end users
-- src/app.tsx
-- src/index.tsx
-- src/index.html
-- src/manifest.json
-- src/app.scss
-- package.json
-- Makefile
-- tools/pi-monitor-history
-- packaging/pi-monitor-history.service
-- packaging/pi-monitor-history.timer
+
+* install.sh
+* README.md
+* BUILD-NOTES.txt
+* src/app.tsx
+* src/index.tsx
+* src/index.html
+* src/manifest.json
+* src/app.scss
+* package.json
+* Makefile
+* tools/pi-monitor-history
+* packaging/pi-monitor-history.service
+* packaging/pi-monitor-history.timer
 
 Current installed/runtime paths
-- Cockpit plugin:
+
+* Cockpit plugin:
   /usr/local/share/cockpit/pi-monitor
-- History collector script:
+* History collector script:
   /usr/local/bin/pi-monitor-history
-- Service unit:
+* Service unit:
   /etc/systemd/system/pi-monitor-history.service
-- Timer unit:
+* Timer unit:
   /etc/systemd/system/pi-monitor-history.timer
-- Runtime history data:
+* Runtime history data:
   /var/lib/pi-monitor/history.ndjson
 
-Important installer behavior
-- verify it is run from the repo root
-- run make install
-- install the history collector and unit files from the repo copies
-- set the collector script executable
-- run systemctl daemon-reload
-- run systemctl enable --now pi-monitor-history.timer
-- run systemctl start pi-monitor-history.service once so fresh installs get an immediate first history sample
-- do not restart Cockpit automatically
+Current installer behavior
+
+* verify it is run with sudo/root
+* verify it is run from the repo root
+* hard-stop unless the system is a Raspberry Pi 5
+* verify Cockpit is present via cockpit-bridge
+* verify or install required build/runtime dependencies as needed
+* optionally offer smartmontools for full NVMe SMART details
+* run make install
+* install the history collector and unit files from the repo copies
+* set the collector script executable
+* run systemctl daemon-reload
+* run systemctl enable --now pi-monitor-history.timer
+* run systemctl start pi-monitor-history.service once so fresh installs get an immediate first history sample
+* do not restart Cockpit automatically
+
+Required items currently enforced by install.sh
+
+* Raspberry Pi 5 hardware
+* cockpit-bridge
+* systemctl
+* make
+* nodejs
+* npm
+* python3
+* vcgencmd
+
+Optional item currently offered by install.sh
+
+* smartmontools
+
+  * purpose: full NVMe SMART health details such as health status, temperature, percentage used, power-on hours, unsafe shutdowns, and media/data integrity errors
 
 Why the immediate first service start matters
-- Without it, a fresh install can look broken because History / Trends stays blank until the timer's first scheduled run.
+
+* Without it, a fresh install can look broken because History / Trends stays blank until the timer's first scheduled run.
 
 Fresh-install verification flow
-From a test system or clean state:
 
-sudo rm -rf /usr/local/share/cockpit/pi-monitor
-sudo rm -f /usr/local/bin/pi-monitor-history
-sudo rm -f /etc/systemd/system/pi-monitor-history.service
-sudo rm -f /etc/systemd/system/pi-monitor-history.timer
-sudo rm -f /var/lib/pi-monitor/history.ndjson
-sudo rmdir /var/lib/pi-monitor 2>/dev/null || true
-sudo systemctl daemon-reload
+Negative hardware test:
 
-Then from the repo root:
+* Use a non-Pi-5 system and confirm:
+  sudo ./install.sh
+* Expected result:
+  installer exits cleanly with the non-Pi-5 hardware message and does not continue
 
+Positive Pi 5 install test from a clean clone:
+cd /home/asl
+sudo rm -rf cockpit-pi5-monitor
+git clone https://github.com/ke2hni/cockpit-pi5-monitor.git
+cd cockpit-pi5-monitor
 sudo ./install.sh
 
 Then verify:
-
-cockpit-bridge --packages | grep -A3 -B2 'pi-monitor\|Pi 5 Monitor'
+cockpit-bridge --packages | grep -A3 -B2 'pi-monitor|Pi 5 Monitor'
 systemctl status pi-monitor-history.timer --no-pager
 systemctl status pi-monitor-history.service --no-pager
 ls -ld /var/lib/pi-monitor /var/lib/pi-monitor/history.ndjson
 sudo tail -n 3 /var/lib/pi-monitor/history.ndjson
 
 Expected results
-- plugin appears as pi-monitor in cockpit-bridge --packages
-- install path is /usr/local/share/cockpit/pi-monitor
-- timer is enabled and active
-- service exits successfully as a oneshot
-- history.ndjson exists and contains samples immediately after install
+
+* plugin appears as pi-monitor in cockpit-bridge --packages
+* install path is /usr/local/share/cockpit/pi-monitor
+* timer is enabled and active
+* service exits successfully as a oneshot
+* history.ndjson exists and contains samples immediately after install
 
 Git/GitHub notes
-- tools/pi-monitor-history may be blocked by .gitignore rules affecting tools/
-- if needed, force-add it with:
+
+* tools/pi-monitor-history may be blocked by .gitignore rules affecting tools/
+* if needed, force-add it with:
   git add -f tools/pi-monitor-history
-- normal release flow:
+* normal release flow:
   git add ...
   git commit -m "..."
-  git push origin main
-- if origin/main moved ahead, use:
   git fetch origin
   git rebase origin/main
   git push origin main
-- avoid force-pushing unless absolutely necessary
+* avoid force-pushing unless absolutely necessary
 
 README guidance
-- Keep the public README focused on normal users
-- Top sections should cover:
+
+* Keep the public README focused on normal users
+* Top sections should cover:
+
   1. what it is
-  2. how to install it from GitHub
-  3. what files/paths it creates
-  4. how to remove it
-- Source/build notes should stay in this BUILD-NOTES file, not the main README
+  2. install from GitHub
+  3. required and optional dependencies
+  4. installed paths
+  5. removal steps
+* Source/build notes should stay in this BUILD-NOTES file, not the main README
 
 Scope reminders
-- Raspberry Pi 5 focused
-- Cockpit-compatible third-party plugin
-- Keep it simple, readable, and maintainable
-- Stay close to Cockpit starter-kit conventions where practical
+
+* Raspberry Pi 5 focused
+* Cockpit-compatible third-party plugin
+* Keep it simple, readable, and maintainable
+* Stay close to Cockpit starter-kit conventions where practical
