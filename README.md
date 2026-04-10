@@ -1,3 +1,15 @@
+From the project root, install with:
+
+## Quick Install
+
+### Clone from GitHub
+
+```bash
+git clone https://github.com/ke2hni/cockpit-pi5-monitor.git
+cd cockpit-pi5-monitor
+sudo ./install.sh
+```
+
 # Pi 5 Monitor
 
 Pi 5 Monitor is a Cockpit-compatible third-party plugin for Raspberry Pi 5 systems.
