@@ -4,7 +4,7 @@
   },
   "menu": {
     "index": {
-      "label": "Pi 5 Monitor",
+      "label": "Pi 5 Hardware Monitor",
       "path": "index.html",
       "order": 65
     }

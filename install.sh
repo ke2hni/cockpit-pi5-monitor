@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Pi 5 Monitor installer
+# Pi 5 Hardware Monitor installer
 # Installs the Cockpit plugin plus the history collector script, service, and timer.
 # Intended to be run from the project root.
 
@@ -74,10 +74,10 @@ apt_install_package() {
             return 0
         fi
 
-        fail "$package_name is required for Pi 5 Monitor. Install it, then re-run this installer."
+        fail "$package_name is required for Pi 5 Hardware Monitor. Install it, then re-run this installer."
     fi
 
-    fail "$package_name is required for Pi 5 Monitor. Install it, then re-run this installer."
+    fail "$package_name is required for Pi 5 Hardware Monitor. Install it, then re-run this installer."
 }
 
 maybe_install_optional_package() {
@@ -137,7 +137,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ ! -f "$PROJECT_ROOT/package.json" || ! -f "$PROJECT_ROOT/Makefile" ]]; then
-    fail "run this script from the Pi 5 Monitor project root."
+    fail "run this script from the Pi 5 Hardware Monitor project root."
 fi
 
 require_file "$HISTORY_SCRIPT_SRC"
@@ -145,11 +145,11 @@ require_file "$SERVICE_SRC"
 require_file "$TIMER_SRC"
 
 if ! is_raspberry_pi_5; then
-    fail "Pi 5 Monitor only supports Raspberry Pi 5 systems. This installer will not continue on non-Pi-5 hardware."
+    fail "Pi 5 Hardware Monitor only supports Raspberry Pi 5 systems. This installer will not continue on non-Pi-5 hardware."
 fi
 
 if ! command -v cockpit-bridge >/dev/null 2>&1; then
-    fail "Cockpit is not installed or cockpit-bridge is missing. Pi 5 Monitor is a Cockpit plugin and requires Cockpit first."
+    fail "Cockpit is not installed or cockpit-bridge is missing. Pi 5 Hardware Monitor is a Cockpit plugin and requires Cockpit first."
 fi
 
 ensure_required_command make make "build/install support used by the Cockpit starter-kit Makefile"
@@ -159,7 +159,7 @@ ensure_required_command python3 python3 "runtime required by the pi-monitor-hist
 ensure_required_command systemctl systemd "service manager required for the pi-monitor-history service and timer"
 
 if ! command -v vcgencmd >/dev/null 2>&1; then
-    fail "vcgencmd is missing. Pi 5 Monitor needs Raspberry Pi firmware utilities for temperatures, clocks, voltages, and throttling data. Install the package that provides vcgencmd on this system, then re-run this installer."
+    fail "vcgencmd is missing. Pi 5 Hardware Monitor needs Raspberry Pi firmware utilities for temperatures, clocks, voltages, and throttling data. Install the package that provides vcgencmd on this system, then re-run this installer."
 fi
 
 maybe_install_optional_package \
@@ -183,7 +183,7 @@ systemctl start pi-monitor-history.service
 
 cat <<MSG
 
-Pi 5 Monitor install complete.
+Pi 5 Hardware Monitor install complete.
 
 Installed paths:
   Cockpit plugin:   $PLUGIN_DIR
@@ -192,7 +192,7 @@ Installed paths:
   Timer unit:       $TIMER_DST
 
 Next checks:
-  cockpit-bridge --packages | grep -A3 -B2 'pi-monitor\\|Pi 5 Monitor'
+  cockpit-bridge --packages | grep -A3 -B2 'pi-monitor\\|Pi 5 Hardware Monitor'
   systemctl status pi-monitor-history.timer --no-pager
   systemctl status pi-monitor-history.service --no-pager
   ls -ld /var/lib/pi-monitor /var/lib/pi-monitor/history.ndjson

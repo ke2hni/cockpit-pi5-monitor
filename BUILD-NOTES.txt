@@ -1,4 +1,4 @@
-Pi 5 Monitor — BUILD-NOTES
+Pi 5 Hardware Monitor — BUILD-NOTES
 
 This file is for source/build and project-maintenance reference.
 It is not needed by normal users who are only installing the plugin.
@@ -98,7 +98,7 @@ cd cockpit-pi5-monitor
 sudo ./install.sh
 
 Then verify:
-cockpit-bridge --packages | grep -A3 -B2 'pi-monitor|Pi 5 Monitor'
+cockpit-bridge --packages | grep -A3 -B2 'pi-monitor|Pi 5 Hardware Monitor'
 systemctl status pi-monitor-history.timer --no-pager
 systemctl status pi-monitor-history.service --no-pager
 ls -ld /var/lib/pi-monitor /var/lib/pi-monitor/history.ndjson

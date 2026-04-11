@@ -8,7 +8,7 @@
 import React from 'react';
 
 /*
- * React entrypoint for the Pi 5 Monitor Cockpit plugin.
+ * React entrypoint for the Pi 5 Hardware Monitor Cockpit plugin.
  * This file boots the application after the page DOM is ready.
  */
 import { createRoot } from 'react-dom/client';

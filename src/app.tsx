@@ -6,7 +6,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 /*
- * Main Cockpit/React UI dependencies used by the Pi 5 Monitor page.
+ * Main Cockpit/React UI dependencies used by the Pi 5 Hardware Monitor page.
  */
 import { Card, CardBody } from "@patternfly/react-core/dist/esm/components/Card/index.js";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content/index.js";
@@ -1442,7 +1442,7 @@ async function readMonitorData(): Promise<MonitorState> {
 }
 
 /*
- * Main Pi 5 Monitor application component.
+ * Main Pi 5 Hardware Monitor application component.
  * Handles live refresh loops, persisted UI state, history selection, and page render.
  */
 export const Application = () => {
@@ -1635,7 +1635,7 @@ export const Application = () => {
                             <FlexItem flex={{ default: "flex_1" }}>
                                 <Title headingLevel="h1">Raspberry Pi 5 Hardware Monitor</Title>
                                 <Content component={ContentVariants.p}>
-                                    Ver. 1.0 - April 2026
+                                    Ver. 1.2 - April 2026
                                 </Content>
                             </FlexItem>
 

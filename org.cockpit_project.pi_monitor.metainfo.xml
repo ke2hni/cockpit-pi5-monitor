@@ -2,11 +2,11 @@
 <component type="addon">
   <id>org.cockpit_project.pi_monitor</id>
   <metadata_license>CC0-1.0</metadata_license>
-  <name>Pi 5 Monitor</name>
+  <name>Pi 5 Hardware Monitor</name>
   <summary>Raspberry Pi 5 hardware, power, clocks, storage, and system status monitor for Cockpit</summary>
   <description>
     <p>
-      Pi 5 Monitor is a Cockpit add-on for Raspberry Pi 5 systems. It provides
+      Pi 5 Hardware Monitor is a Cockpit add-on for Raspberry Pi 5 systems. It provides
       a simple live view of thermal status, cooling, power and throttling,
       system summary, boot and device information, NVMe and SD card details,
       PCIe link status, voltages, clocks, and advanced Raspberry Pi firmware

@@ -1,6 +1,34 @@
-# Pi 5 Monitor
+# Pi 5 Hardware Monitor
 
 Cockpit plugin for monitoring Raspberry Pi 5 hardware, power, clocks, storage, and system status.
+
+---
+
+Pi 5 Hardware Monitor is a third-party plugin for Cockpit that provides real-time monitoring of hardware, power, clocks, storage, and system status on a Raspberry Pi 5.
+
+It runs inside the Cockpit web interface and is not tied to any specific distribution.
+
+Important:
+
+This plugin is not limited to AllStarLink 3 (ASL 3)
+It will run on any Linux system running Cockpit on a Raspberry Pi 5, as long as required dependencies are installed
+ASL 3 is simply one environment where Cockpit is commonly used
+
+---
+
+What This Plugin Does
+
+Displays real-time Raspberry Pi 5 hardware data:
+CPU, NVMe, and I/O temperatures
+Power and throttling status
+Clock speeds
+Detects and shows available storage:
+NVMe, microSD, USB
+Displays cooling system data (fan RPM / PWM when available)
+Provides system status and summary information
+Includes optional history logging via a background service
+
+All data is read-only monitoring and adapts automatically based on detected hardware.
 
 ---
 
