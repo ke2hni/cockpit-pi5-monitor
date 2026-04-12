@@ -128,3 +128,10 @@ sudo rm -rf /var/lib/pi-monitor
 ## License
 
 LGPL-2.1-or-later
+
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213701" src="https://github.com/user-attachments/assets/069aa46e-e94c-4259-ac21-f5585030d4ef" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213720" src="https://github.com/user-attachments/assets/b05785af-968e-44dc-965b-f3a3a6328aae" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213729" src="https://github.com/user-attachments/assets/97135124-f9f0-42bc-ba12-fe835c56fd12" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213736" src="https://github.com/user-attachments/assets/cc1f8715-bb2e-45f8-aef5-8398085f050e" />
+<img width="1600" height="900" alt="Screenshot 2026-04-09 213752" src="https://github.com/user-attachments/assets/dc0110ea-e1e7-4889-bfea-939436d46e71" />
+
