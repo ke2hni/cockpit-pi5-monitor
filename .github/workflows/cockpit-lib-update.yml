@@ -2,7 +2,6 @@ name: cockpit-lib-update
 on:
   schedule:
     - cron: '0 2 * * 4'
-  # can be run manually on https://github.com/cockpit-project/starter-kit/actions
   workflow_dispatch:
 jobs:
   cockpit-lib-update:
@@ -19,10 +18,16 @@ jobs:
       - name: Set up configuration and secrets
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
+          mkdir -p ~/.config
           echo '${{ secrets.GITHUB_TOKEN }}' > ~/.config/github-token
 
       - name: Clone repository
         uses: actions/checkout@v6
+
+      - name: Pacify git's permission check
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory /__w/cockpit-pi5-hardware-monitor/cockpit-pi5-hardware-monitor
 
       - name: Run cockpit-lib-update
         run: |
