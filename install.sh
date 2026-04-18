@@ -514,7 +514,7 @@ PY
 verify_project_files() {
   require_file "$PROJECT_ROOT/Makefile"
   require_file "$PROJECT_ROOT/package.json"
-  require_file "$PROJECT_ROOT/manifest.json"
+  require_file "$PROJECT_ROOT/src/manifest.json"
   [[ -d "$PROJECT_ROOT/src" ]] || fail_with_help "repo_layout" "Required directory missing: $PROJECT_ROOT/src"
 
   local history_script history_service history_timer
@@ -640,10 +640,10 @@ build_and_install_plugin() {
 
   [[ -d "$INSTALL_DIR" ]] || fail_with_help "install_problem" "Expected install directory not found after make install: $INSTALL_DIR"
   [[ -f "$INSTALL_DIR/manifest.json" ]] || fail_with_help "install_problem" "Installed plugin is missing manifest.json at $INSTALL_DIR"
-  [[ -f "$PROJECT_ROOT/manifest.json" ]] || fail_with_help "repo_layout" "Source manifest missing at $PROJECT_ROOT/manifest.json"
+  [[ -f "$PROJECT_ROOT/src/manifest.json" ]] || fail_with_help "repo_layout" "Source manifest missing at $PROJECT_ROOT/src/manifest.json"
 
   local src_sum dst_sum
-  src_sum=$(sha256sum "$PROJECT_ROOT/manifest.json" | awk '{print $1}')
+  src_sum=$(sha256sum "$PROJECT_ROOT/src/manifest.json" | awk '{print $1}')
   dst_sum=$(sha256sum "$INSTALL_DIR/manifest.json" | awk '{print $1}')
   add_summary_unique SUMMARY_ALREADY_OK "Source manifest checksum: $src_sum"
   add_summary_unique SUMMARY_ALREADY_OK "Installed manifest checksum: $dst_sum"
