@@ -134,6 +134,16 @@ sudo ./install.sh
 
 ---
 
+## Upgrade Instruction
+
+If the install folder still exists, just follow these instructions to upgrade to newest version
+
+```bash
+cd ~/cockpit-pi5-hardware-monitor
+git pull
+sudo ./install.sh
+```
+
 ## Remove / Uninstall
 
 ```bash
