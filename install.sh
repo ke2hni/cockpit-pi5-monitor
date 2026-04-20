@@ -22,6 +22,8 @@ INTERACTIVE=0
 HISTORY_COMPONENTS_INSTALLED=0
 INSTALL_DEGRADED=0
 VIDEO_GROUP_CHANGED=0
+SMART_SUDO_CHANGED=0
+SUDOERS_SMART_FILE="/etc/sudoers.d/pi-monitor-smart"
 [[ -t 0 && -t 1 ]] && INTERACTIVE=1
 
 REAL_USER="${SUDO_USER:-}"
@@ -505,6 +507,112 @@ ensure_optional_package() {
   fi
 }
 
+have_nopasswd_sudo_all() {
+  local user_name="$1"
+  sudo -l -U "$user_name" 2>/dev/null | grep -Eq '\(ALL\)[[:space:]]+NOPASSWD:[[:space:]]+ALL|\(ALL[[:space:]]*:[[:space:]]*ALL\)[[:space:]]+NOPASSWD:[[:space:]]+ALL'
+}
+
+validate_sudoers_file() {
+  local file_path="$1"
+  visudo -cf "$file_path" >/dev/null 2>&1
+}
+
+ensure_cockpit_user_nvme_sudo() {
+  local smartctl_path="" nvme_path="" sudoers_line="" tmp_file="" current_file_text=""
+
+  if [[ "$NVME_PRESENT" -ne 1 || -z "$REAL_USER" ]]; then
+    return 0
+  fi
+
+  if ! id "$REAL_USER" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  smartctl_path=$(command -v smartctl 2>/dev/null || true)
+  nvme_path=$(command -v nvme 2>/dev/null || true)
+
+  if [[ -z "$smartctl_path" ]]; then
+    warn "smartctl is not available, so NVMe SMART sudo validation was skipped."
+    return 0
+  fi
+
+  if sudo -u "$REAL_USER" sudo -n "$smartctl_path" -a /dev/nvme0n1 >/dev/null 2>&1; then
+    add_summary_unique SUMMARY_ALREADY_OK "User $REAL_USER can run smartctl without a sudo password"
+    if [[ -n "$nvme_path" ]] && sudo -u "$REAL_USER" sudo -n "$nvme_path" smart-log /dev/nvme0n1 >/dev/null 2>&1; then
+      add_summary_unique SUMMARY_ALREADY_OK "User $REAL_USER can run nvme smart-log without a sudo password"
+    elif [[ -n "$nvme_path" ]]; then
+      add_summary_unique SUMMARY_ALREADY_OK "nvme-cli installed at $nvme_path"
+    fi
+    return 0
+  fi
+
+  if have_nopasswd_sudo_all "$REAL_USER"; then
+    add_summary_unique SUMMARY_ALREADY_OK "User $REAL_USER already has NOPASSWD sudo access"
+    return 0
+  fi
+
+  log "The Cockpit login user $REAL_USER cannot run smartctl or nvme without a sudo password. Full NVMe SMART telemetry in Cockpit needs passwordless sudo for those commands."
+
+  if [[ "$INTERACTIVE" -eq 1 ]]; then
+    if ! ask_yes_no "Add a limited sudoers rule now for smartctl and nvme so NVMe SMART telemetry works in Cockpit? [Y/n]" "Y"; then
+      warn "NVMe SMART sudoers setup was skipped. NVMe temperature, health, and related SMART fields may be missing in Cockpit for user $REAL_USER."
+      add_summary_unique SUMMARY_ACTIONS "If needed later, create a sudoers rule for $REAL_USER allowing passwordless smartctl and nvme."
+      return 0
+    fi
+  else
+    add_summary_unique SUMMARY_ACTIONS "Add a sudoers rule for $REAL_USER allowing passwordless smartctl and nvme if NVMe SMART data is missing in Cockpit."
+    return 0
+  fi
+
+  sudoers_line="$REAL_USER ALL=(root) NOPASSWD: $smartctl_path"
+  if [[ -n "$nvme_path" ]]; then
+    sudoers_line+=", $nvme_path"
+  fi
+
+  current_file_text=""
+  if [[ -f "$SUDOERS_SMART_FILE" ]]; then
+    current_file_text=$(cat "$SUDOERS_SMART_FILE" 2>/dev/null || true)
+  fi
+
+  if [[ "$current_file_text" != *"$sudoers_line"* ]]; then
+    tmp_file=$(mktemp)
+    {
+      printf '# Managed by Pi 5 Hardware Monitor installer\n'
+      printf '%s\n' "$sudoers_line"
+    } > "$tmp_file"
+
+    if ! validate_sudoers_file "$tmp_file"; then
+      rm -f "$tmp_file"
+      warn "Generated sudoers file for NVMe SMART telemetry did not pass visudo validation."
+      add_summary_unique SUMMARY_ACTIONS "Create the sudoers rule manually for $REAL_USER if NVMe SMART data is missing in Cockpit."
+      return 0
+    fi
+
+    install -m 0440 "$tmp_file" "$SUDOERS_SMART_FILE"
+    rm -f "$tmp_file"
+    SMART_SUDO_CHANGED=1
+    add_summary_unique SUMMARY_UPDATED "Added limited sudoers rule for $REAL_USER (smartctl${nvme_path:+, nvme})"
+  else
+    add_summary_unique SUMMARY_ALREADY_OK "Limited sudoers rule already present for $REAL_USER NVMe SMART telemetry"
+  fi
+
+  if sudo -u "$REAL_USER" sudo -n "$smartctl_path" -a /dev/nvme0n1 >/dev/null 2>&1; then
+    add_summary_unique SUMMARY_ALREADY_OK "Validated passwordless smartctl access for $REAL_USER"
+  else
+    warn "Passwordless smartctl access still failed for $REAL_USER after sudoers setup."
+    add_summary_unique SUMMARY_ACTIONS "Check sudoers policy for $REAL_USER if NVMe SMART fields are still missing in Cockpit."
+  fi
+
+  if [[ -n "$nvme_path" ]]; then
+    if sudo -u "$REAL_USER" sudo -n "$nvme_path" smart-log /dev/nvme0n1 >/dev/null 2>&1; then
+      add_summary_unique SUMMARY_ALREADY_OK "Validated passwordless nvme smart-log access for $REAL_USER"
+    else
+      warn "Passwordless nvme smart-log access still failed for $REAL_USER after sudoers setup."
+      add_summary_unique SUMMARY_ACTIONS "Check sudoers policy or nvme-cli path for $REAL_USER if nvme smart-log data is still missing in Cockpit."
+    fi
+  fi
+}
+
 print_startup_context() {
   log "Installer path: $SCRIPT_PATH"
   log "Project root: $PROJECT_ROOT"
@@ -921,6 +1029,7 @@ main() {
   if [[ "$NVME_PRESENT" -eq 1 ]]; then
     ensure_optional_package "smartmontools" "NVMe storage was detected, so smartmontools is recommended for fuller SMART and health data." "Y"
     ensure_optional_package "nvme-cli" "NVMe storage was detected, so nvme-cli is recommended for fuller NVMe telemetry and smart-log support." "Y"
+    ensure_cockpit_user_nvme_sudo
   else
     add_summary_unique SUMMARY_SKIPPED "smartmontools prompt skipped because no NVMe device was detected"
     add_summary_unique SUMMARY_SKIPPED "nvme-cli prompt skipped because no NVMe device was detected"
