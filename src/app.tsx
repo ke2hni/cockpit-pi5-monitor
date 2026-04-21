@@ -2485,7 +2485,7 @@ export const Application = () => {
                                 <Content>
                                     <Title headingLevel="h2">NVMe Drive</Title>
                                     <Content component={ContentVariants.small}>
-                                        Drive is detected. Certain data only appears when mounted.
+                                        When drive is detected, certain data only appears when mounted.
                                     </Content>
                                 </Content>
                                 <Gallery hasGutter minWidths={{ default: "220px" }}>
@@ -2560,7 +2560,7 @@ export const Application = () => {
                                 <Content>
                                     <Title headingLevel="h2">SD Card</Title>
                                     <Content component={ContentVariants.small}>
-                                        Drive is detected. Certain data only appears when mounted.
+                                        When drive is detected, certain data only appears when mounted.
                                     </Content>
                                 </Content>
                                 <Gallery hasGutter minWidths={{ default: "220px" }}>
@@ -2622,7 +2622,7 @@ export const Application = () => {
                                 <Content>
                                     <Title headingLevel="h2">External USB Storage</Title>
                                     <Content component={ContentVariants.small}>
-                                        Drive is detected. Certain data only appears when mounted.
+                                        When drive is detected, certain data only appears when mounted.
                                     </Content>
                                 </Content>
                                 <Gallery hasGutter minWidths={{ default: "220px" }}>
