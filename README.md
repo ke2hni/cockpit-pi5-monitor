@@ -1,5 +1,7 @@
 # Pi 5 Hardware Monitor
 
+![Platform](https://img.shields.io/badge/Platform-Raspberry%20Pi%205-blue).
+
 Cockpit plugin for monitoring Raspberry Pi 5 hardware, power, clocks, storage, and system status.
 
 ---
